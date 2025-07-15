@@ -20,6 +20,9 @@ public class StockUpdateDTO {
     @JsonProperty("cantidad")
     private Integer cantidad;
 
+    @JsonProperty("clienteId")
+    private Long clienteId;
+
     @JsonProperty("carroId")
     private String carroId;
 }
