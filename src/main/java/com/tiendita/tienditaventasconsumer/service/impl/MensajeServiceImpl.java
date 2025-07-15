@@ -65,7 +65,7 @@ public class MensajeServiceImpl implements MensajeService {
                 // Deserializar directamente el array a lista de DTOs
                 StockUpdateDTO[] stockUpdates = objectMapper.readValue(jsonLimpio, StockUpdateDTO[].class);
                 
-                System.out.println("📦 Array deserializado correctamente. Procesando elementos individuales...");
+                System.out.println("Array deserializado correctamente. Procesando elementos individuales...");
                 
                 for (int i = 0; i < stockUpdates.length; i++) {
                     StockUpdateDTO stockUpdate = stockUpdates[i];
@@ -93,25 +93,19 @@ public class MensajeServiceImpl implements MensajeService {
     
     private void procesarElementoStock(StockUpdateDTO stockUpdate) {
         try {
-            System.out.println("🔍 Procesando actualización de stock:");
-            System.out.println("   - Producto ID: " + stockUpdate.getProductoId());
-            System.out.println("   - Cantidad a reducir: " + stockUpdate.getCantidad());
-            System.out.println("   - Cliente ID: " + stockUpdate.getClienteId());
-            System.out.println("   - Carro ID: " + stockUpdate.getCarroId());
-            
+            System.out.println("Procesando actualización de stock: " + stockUpdate);
             boolean resultado = productoService.reducirStock(stockUpdate.getProductoId(), stockUpdate.getCantidad());
             if (resultado) {
-                System.out.println("✅ Stock actualizado exitosamente para producto " + stockUpdate.getProductoId() + 
-                                     ", cantidad reducida: " + stockUpdate.getCantidad() +
-                                     " (Cliente: " + stockUpdate.getClienteId() + ", Carro: " + stockUpdate.getCarroId() + ")");
+                System.out.println("Stock actualizado exitosamente para producto " + stockUpdate.getProductoId() + 
+                                   ". Cliente: " + stockUpdate.getClienteId() + ", Carro: " + stockUpdate.getCarroId());
             } else {
-                System.err.println("❌ ERROR al actualizar stock para producto " + stockUpdate.getProductoId() + 
+                System.err.println("ERROR al actualizar stock para producto " + stockUpdate.getProductoId() + 
                                      ". Stock insuficiente o producto no encontrado." +
                                      " (Cliente: " + stockUpdate.getClienteId() + ", Carro: " + stockUpdate.getCarroId() + ")");
             }
             
         } catch (Exception e) {
-            System.err.println("💥 Error procesando elemento de stock: " + e.getMessage());
+            System.err.println("Error procesando elemento de stock: " + e.getMessage());
             System.err.println("   - Datos del elemento: " + stockUpdate);
             e.printStackTrace();
         }
