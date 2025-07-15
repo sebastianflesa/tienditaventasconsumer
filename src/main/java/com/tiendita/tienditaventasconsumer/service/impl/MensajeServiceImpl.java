@@ -92,8 +92,7 @@ public class MensajeServiceImpl implements MensajeService {
             boolean resultado = productoService.reducirStock(stockUpdate.getProductoId(), stockUpdate.getCantidad());
             if (resultado) {
                 System.out.println("Stock actualizado para producto " + stockUpdate.getProductoId() + 
-                                     ", cantidad reducida: " + stockUpdate.getCantidad() + 
-                                     ", cliente: " + stockUpdate.getUsuarioId());
+                                     ", cantidad reducida: " + stockUpdate.getCantidad());
             } else {
                 System.err.println("ERROR al actualizar stock para producto " + stockUpdate.getProductoId() + 
                                      ". Stock insuficiente o producto no encontrado.");
