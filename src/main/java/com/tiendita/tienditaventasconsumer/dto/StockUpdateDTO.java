@@ -1,6 +1,7 @@
 package com.tiendita.tienditaventasconsumer.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonAlias;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,5 +21,9 @@ public class StockUpdateDTO {
     private Integer cantidad;
     
     @JsonProperty("usuarioId")
+    @JsonAlias("clienteId") 
     private Integer usuarioId;
+
+    @JsonProperty("carroId")
+    private String carroId;
 }

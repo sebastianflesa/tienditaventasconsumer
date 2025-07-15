@@ -58,29 +58,50 @@ public class MensajeServiceImpl implements MensajeService {
                       
             JsonNode jsonNode = objectMapper.readTree(jsonLimpio);
             
-            if (!jsonNode.has("productoId") || !jsonNode.has("cantidad") || !jsonNode.has("usuarioId")) {
-                System.out.println("Mensaje recibido no es una actualización de stock válida: " + jsonLimpio);
-                return;
-            }
-            
-            StockUpdateDTO stockUpdate = objectMapper.readValue(jsonLimpio, StockUpdateDTO.class);
-            
-            System.out.println("Procesando actualización de stock: " + stockUpdate);
-            
-            boolean resultado = false;
-			resultado = productoService.reducirStock(stockUpdate.getProductoId(), stockUpdate.getCantidad());
-            if (resultado) {
-                System.out.println("Stock actualizado " + stockUpdate.getProductoId() + 
-                                     ", cantidad: " + stockUpdate.getCantidad());
+            // Verificar si es un array de actualizaciones de stock
+            if (jsonNode.isArray()) {
+                System.out.println("Procesando array de actualizaciones de stock con " + jsonNode.size() + " elementos");
+                
+                // Deserializar directamente el array a lista de DTOs
+                StockUpdateDTO[] stockUpdates = objectMapper.readValue(jsonLimpio, StockUpdateDTO[].class);
+                
+                for (StockUpdateDTO stockUpdate : stockUpdates) {
+                    procesarElementoStock(stockUpdate);
+                }
             } else {
-                System.err.println("ERROR al actualizar stock " + stockUpdate.getProductoId() + 
-                                     ". Stock insuficiente o producto no encontrado.");
+                // Procesar como elemento único
+                if (!jsonNode.has("productoId") || !jsonNode.has("cantidad")) {
+                    System.out.println("Mensaje recibido no es una actualización de stock válida: " + jsonLimpio);
+                    return;
+                }
+                
+                StockUpdateDTO stockUpdate = objectMapper.readValue(jsonLimpio, StockUpdateDTO.class);
+                procesarElementoStock(stockUpdate);
             }
-
             
         } catch (Exception e) {
             System.err.println("Error parseando mensaje JSON: " + e.getMessage());
             System.out.println("Mensaje recibido (no es actualización de stock): " + mensajeJson);
+        }
+    }
+    
+    private void procesarElementoStock(StockUpdateDTO stockUpdate) {
+        try {
+            System.out.println("Procesando actualización de stock: " + stockUpdate);
+            
+            boolean resultado = productoService.reducirStock(stockUpdate.getProductoId(), stockUpdate.getCantidad());
+            if (resultado) {
+                System.out.println("Stock actualizado para producto " + stockUpdate.getProductoId() + 
+                                     ", cantidad reducida: " + stockUpdate.getCantidad() + 
+                                     ", cliente: " + stockUpdate.getUsuarioId());
+            } else {
+                System.err.println("ERROR al actualizar stock para producto " + stockUpdate.getProductoId() + 
+                                     ". Stock insuficiente o producto no encontrado.");
+            }
+            
+        } catch (Exception e) {
+            System.err.println("Error procesando elemento de stock: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
